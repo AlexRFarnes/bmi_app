@@ -1,6 +1,2 @@
-def main():
-    print("Hello from bmi-app!")
+# bmi_calculator.py
 
-
-if __name__ == "__main__":
-    main()
