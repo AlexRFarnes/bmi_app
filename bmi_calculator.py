@@ -28,6 +28,8 @@ class App(ctk.CTk):
         # Widgets
         ResultText(self)
         WeightInput(self)
+        HeightInput(self)
+        UnitSwitcher(self)
 
         # Main loop
         self.mainloop()
@@ -124,6 +126,48 @@ class WeightInput(ctk.CTkFrame):
             corner_radius=settings.CORNER_RADIUS,
         )
         small_plus_button.grid(row=0, column=3, padx=4, pady=4)
+
+
+class HeightInput(ctk.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(master=parent, fg_color=settings.WHITE)
+
+        # Place
+        self.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
+
+        # Widgets
+        slider = ctk.CTkSlider(
+            self,
+            button_color=settings.GREEN,
+            button_hover_color=settings.GRAY,
+            progress_color=settings.GREEN,
+            fg_color=settings.LIGHT_GRAY,
+        )
+        slider.pack(side="left", fill="x", expand=True, padx=10, pady=10)
+
+        output_text = ctk.CTkLabel(
+            self,
+            text="1.7m",
+            text_color=settings.BLACK,
+            font=ctk.CTkFont(family=settings.FONT, size=settings.INPUT_FONT_SIZE),
+        )
+        output_text.pack(side="left", fill="x", expand=True, padx=10, pady=10)
+
+
+class UnitSwitcher(ctk.CTkLabel):
+    def __init__(self, parent):
+        super().__init__(
+            master=parent,
+            text="metric",
+            font=ctk.CTkFont(
+                family=settings.FONT, size=settings.SWITCH_FONT_SIZE, weight="bold"
+            ),
+            fg_color=settings.GREEN,
+            text_color=settings.DARK_GREEN,
+        )
+
+        # Place
+        self.place(relx=0.98, rely=0.01, anchor="ne")
 
 
 if __name__ == "__main__":

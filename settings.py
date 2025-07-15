@@ -11,7 +11,7 @@ CORNER_RADIUS = 6
 GREEN = "#50bfab"
 DARK_GREEN = "#3a8a7b"
 WHITE = "#f2f2f2"
-BLACK = "#1f1f1f"
+BLACK = "#1a1a1a"
 LIGHT_GRAY = "#e8e8e8"
 GRAY = "#d9d9d9"
 
