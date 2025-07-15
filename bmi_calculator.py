@@ -25,14 +25,26 @@ class App(ctk.CTk):
         self.columnconfigure(0, weight=1)
         self.rowconfigure((0, 1, 2, 3), weight=1, uniform="a")
 
+        # Data
+        self.height = ctk.IntVar(value=170)
+        self.weight = ctk.DoubleVar(value=65)
+        self.bmi = ctk.StringVar()
+        self.update_bmi()
+
         # Widgets
-        ResultText(self)
+        ResultText(self, self.bmi)
         WeightInput(self)
         HeightInput(self)
         UnitSwitcher(self)
 
         # Main loop
         self.mainloop()
+
+    def update_bmi(self):
+        height_meter = self.height.get() / 100
+        weight_kg = self.weight.get()
+        bmi = round(weight_kg / (height_meter * height_meter), 2)
+        self.bmi.set(bmi)
 
     def change_title_bar_color(self):
         try:
@@ -45,7 +57,7 @@ class App(ctk.CTk):
 
 
 class ResultText(ctk.CTkLabel):
-    def __init__(self, parent):
+    def __init__(self, parent, bmi):
         # Font
         font = ctk.CTkFont(
             family=settings.FONT,
@@ -53,7 +65,11 @@ class ResultText(ctk.CTkLabel):
             weight="bold",
         )
         super().__init__(
-            master=parent, text="22.5", font=font, text_color=settings.WHITE
+            master=parent,
+            text="22.5",
+            font=font,
+            text_color=settings.WHITE,
+            textvariable=bmi,
         )
 
         # Place
