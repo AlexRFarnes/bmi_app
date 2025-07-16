@@ -7,7 +7,7 @@ import settings
 
 try:
     from ctypes import byref, c_int, sizeof, windll
-except:
+except Exception:
     pass
 
 
@@ -31,28 +31,35 @@ class App(ctk.CTk):
         self.bmi = ctk.StringVar()
         self.update_bmi()
 
+        # Tracing
+        self.height.trace("w", self.update_bmi)
+        self.weight.trace("w", self.update_bmi)
+
         # Widgets
         ResultText(self, self.bmi)
-        WeightInput(self)
-        HeightInput(self)
+        HeightInput(self, self.height)
+        WeightInput(self, self.weight)
         UnitSwitcher(self)
 
         # Main loop
         self.mainloop()
 
-    def update_bmi(self):
+    def update_bmi(self, *args):
         height_meter = self.height.get() / 100
         weight_kg = self.weight.get()
         bmi = round(weight_kg / (height_meter * height_meter), 2)
-        self.bmi.set(bmi)
+        self.bmi.set(str(bmi))
 
     def change_title_bar_color(self):
         try:
-            HWND = windll.user32.GetParent(self.winfo_id())
-            windll.dwmapi.DwmSetWindowAttribute(
-                HWND, 35, byref(c_int(settings.TITLE_HEX_COLORS)), sizeof(c_int)
+            HWND = windll.user32.GetParent(self.winfo_id())  # type: ignore
+            windll.dwmapi.DwmSetWindowAttribute(  # type: ignore
+                HWND,
+                35,
+                byref(c_int(settings.TITLE_HEX_COLORS)),  # type: ignore
+                sizeof(c_int),  # type: ignore
             )
-        except:
+        except Exception:
             pass
 
 
@@ -77,8 +84,10 @@ class ResultText(ctk.CTkLabel):
 
 
 class WeightInput(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, weight):
         super().__init__(master=parent, fg_color=settings.WHITE)
+
+        self.weight = weight
 
         # Place
         self.grid(column=0, row=2, sticky="nsew", padx=10, pady=10)
@@ -107,6 +116,7 @@ class WeightInput(ctk.CTkFrame):
             fg_color=settings.LIGHT_GRAY,
             hover_color=settings.GRAY,
             corner_radius=settings.CORNER_RADIUS,
+            command=lambda: self.update_weight(("minus", "large")),
         )
         minus_button.grid(row=0, column=0, sticky="ns", padx=8, pady=8)
 
@@ -118,6 +128,7 @@ class WeightInput(ctk.CTkFrame):
             fg_color=settings.LIGHT_GRAY,
             hover_color=settings.GRAY,
             corner_radius=settings.CORNER_RADIUS,
+            command=lambda: self.update_weight(("minus", "small")),
         )
         small_minus_button.grid(row=0, column=1, padx=4, pady=4)
 
@@ -129,6 +140,7 @@ class WeightInput(ctk.CTkFrame):
             fg_color=settings.LIGHT_GRAY,
             hover_color=settings.GRAY,
             corner_radius=settings.CORNER_RADIUS,
+            command=lambda: self.update_weight(("plus", "large")),
         )
         plus_button.grid(row=0, column=4, sticky="ns", padx=8, pady=8)
 
@@ -140,12 +152,22 @@ class WeightInput(ctk.CTkFrame):
             fg_color=settings.LIGHT_GRAY,
             hover_color=settings.GRAY,
             corner_radius=settings.CORNER_RADIUS,
+            command=lambda: self.update_weight(("plus", "small")),
         )
         small_plus_button.grid(row=0, column=3, padx=4, pady=4)
 
+    def update_weight(self, info=None):
+        amount = 1 if info[1] == "large" else 0.1
+        if info[0] == "plus":
+            self.weight.set(self.weight.get() + amount)
+        else:
+            self.weight.set(self.weight.get() - amount)
 
-class HeightInput(ctk.CTkFrame):
-    def __init__(self, parent):
+
+class HeightInput(
+    ctk.CTkFrame,
+):
+    def __init__(self, parent, height):
         super().__init__(master=parent, fg_color=settings.WHITE)
 
         # Place
@@ -158,6 +180,9 @@ class HeightInput(ctk.CTkFrame):
             button_hover_color=settings.GRAY,
             progress_color=settings.GREEN,
             fg_color=settings.LIGHT_GRAY,
+            variable=height,
+            from_=100,
+            to=250,
         )
         slider.pack(side="left", fill="x", expand=True, padx=10, pady=10)
 
