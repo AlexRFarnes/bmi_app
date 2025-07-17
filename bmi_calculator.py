@@ -10,7 +10,7 @@ try:
 except Exception:
     pass
 
-INITIAL_WEIGHT = 70
+INITIAL_WEIGHT = 70.0
 INITIAL_HEIGHT = 170
 
 
@@ -108,9 +108,9 @@ class WeightInput(ctk.CTkFrame):
 
         # Text
         self.output = ctk.StringVar(value=f"{INITIAL_WEIGHT}kg")
+        self.update_weight()
         label = ctk.CTkLabel(
             self,
-            text="",
             textvariable=self.output,
             text_color=settings.BLACK,
             font=font,
@@ -167,12 +167,14 @@ class WeightInput(ctk.CTkFrame):
         small_plus_button.grid(row=0, column=3, padx=4, pady=4)
 
     def update_weight(self, info=None):
-        amount = 1 if info[1] == "large" else 0.1
-        if info[0] == "plus":
-            self.weight.set(self.weight.get() + amount)
-        else:
-            self.weight.set(self.weight.get() - amount)
-        self.output.set(f"{round(self.weight.get(), 1)}kg")
+        if info:
+            amount = 1 if info[1] == "large" else 0.1
+            if info[0] == "plus":
+                self.weight.set(self.weight.get() + amount)
+            else:
+                self.weight.set(self.weight.get() - amount)
+
+            self.output.set(f"{round(self.weight.get(), 1)}kg")
 
 
 class HeightInput(
@@ -203,7 +205,6 @@ class HeightInput(
         output_text = ctk.CTkLabel(
             self,
             textvariable=self.output,
-            text="",
             text_color=settings.BLACK,
             font=ctk.CTkFont(family=settings.FONT, size=settings.INPUT_FONT_SIZE),
         )
