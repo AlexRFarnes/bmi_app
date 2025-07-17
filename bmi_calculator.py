@@ -10,6 +10,9 @@ try:
 except Exception:
     pass
 
+INITIAL_WEIGHT = 70
+INITIAL_HEIGHT = 170
+
 
 class App(ctk.CTk):
     def __init__(self):
@@ -26,8 +29,8 @@ class App(ctk.CTk):
         self.rowconfigure((0, 1, 2, 3), weight=1, uniform="a")
 
         # Data
-        self.height = ctk.IntVar(value=170)
-        self.weight = ctk.DoubleVar(value=65)
+        self.height = ctk.IntVar(value=INITIAL_HEIGHT)
+        self.weight = ctk.DoubleVar(value=INITIAL_WEIGHT)
         self.bmi = ctk.StringVar()
         self.update_bmi()
 
@@ -104,7 +107,14 @@ class WeightInput(ctk.CTkFrame):
         font = ctk.CTkFont(family=settings.FONT, size=settings.INPUT_FONT_SIZE)
 
         # Text
-        label = ctk.CTkLabel(self, text="70kg", text_color=settings.BLACK, font=font)
+        self.output = ctk.StringVar(value=f"{INITIAL_WEIGHT}kg")
+        label = ctk.CTkLabel(
+            self,
+            text="",
+            textvariable=self.output,
+            text_color=settings.BLACK,
+            font=font,
+        )
         label.grid(row=0, column=2, sticky="nsew")
 
         # Buttons
@@ -162,6 +172,7 @@ class WeightInput(ctk.CTkFrame):
             self.weight.set(self.weight.get() + amount)
         else:
             self.weight.set(self.weight.get() - amount)
+        self.output.set(f"{round(self.weight.get(), 1)}kg")
 
 
 class HeightInput(
@@ -183,16 +194,24 @@ class HeightInput(
             variable=height,
             from_=100,
             to=250,
+            command=self.update_text,
         )
         slider.pack(side="left", fill="x", expand=True, padx=10, pady=10)
 
+        self.output = ctk.StringVar(value=f"{round(INITIAL_HEIGHT / 100, 2)}m")
+
         output_text = ctk.CTkLabel(
             self,
-            text="1.7m",
+            textvariable=self.output,
+            text="",
             text_color=settings.BLACK,
             font=ctk.CTkFont(family=settings.FONT, size=settings.INPUT_FONT_SIZE),
         )
         output_text.pack(side="left", fill="x", expand=True, padx=10, pady=10)
+
+    def update_text(self, amount):
+        meters = round(int(amount) / 100, 2)
+        self.output.set(f"{meters}m")
 
 
 class UnitSwitcher(ctk.CTkLabel):
