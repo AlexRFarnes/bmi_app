@@ -188,7 +188,7 @@ class WeightInput(ctk.CTkFrame):
         if self.is_metric_unit.get():
             self.output.set(f"{round(self.weight.get(), 1)}kg")
         else:
-            raw_ounces = self.weight.get() * 2.2046 * 16
+            raw_ounces = self.weight.get() * 35.274
             pounds, ounces = divmod(raw_ounces, 16)
             self.output.set(f"{int(pounds)}lb {int(ounces)}oz")
 
